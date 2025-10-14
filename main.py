@@ -1,6 +1,6 @@
 from fastapi import FastAPI,Response,HTTPException
 from schemas import UserIn,UserOut
-
+from db import Base
 users:list = []
 
 
@@ -30,3 +30,6 @@ async def get_all_users(query:str | None = None):
     return Response(status_code=204,content="No content")
 
     
+@app.on_event("startup")
+def start_application():
+    Base.metadata.create_all()
