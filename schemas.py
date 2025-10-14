@@ -6,6 +6,6 @@ class UserIn(BaseModel):
     password:str
 
 class UserOut(BaseModel):
-    id:int | None
+    # id:int | None
     username:str
     email:str   
