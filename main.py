@@ -19,7 +19,7 @@ async def get_all_users(query:str | None = None):
         results = []
 
         for i in users:
-            if query in i.get("nome") or query in i.get("email"):
+            if query in i.get("username") or query in i.get("email"):
                 results.append(i)
             
         return results
