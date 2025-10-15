@@ -1,11 +1,14 @@
 from fastapi import FastAPI,Response,HTTPException,Depends
 from schemas import UserIn,UserOut
 from db import Base,Session,UserDB,get_session,engine
+from security import hash_password,verifify_password
+
 app = FastAPI()
 
 @app.post("/users",status_code=201)
 async def add_new_user(user:UserIn,db:Session=Depends(get_session)):
     user_db = UserDB(**user.model_dump())
+    user_db.password = hash_password(user_db.password)
     db.add(user_db)
     db.commit()
     return Response(content="New recource created",status_code=201)
@@ -31,6 +34,14 @@ async def get_user_by_id(id:int,db:Session=Depends(get_session)):
         raise HTTPException(status_code=404,detail="Not found!")
     return user
 
+@app.post("/login")
+async def authenticate(user:UserIn,db:Session=Depends(get_session)):
+    user_db = db.query(UserDB).filter(UserDB.username==user.username).first()
+    if user_db:
+        authenticated = verifify_password(user.password,user_db.password)
+        return authenticated
+    
+    raise HTTPException(status_code=404,detail="Not Found!")
 
     
 @app.on_event("startup")
