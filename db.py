@@ -8,12 +8,19 @@ engine = create_engine(
 
 SessionLocal = sessionmaker(bind=engine)
 
+def get_session():
+    try:
+        db = SessionLocal()
+        yield db 
+    finally:
+        db.close()
+
 
 Base = declarative_base()
 
 class UserDB(Base):
     __tablename__ = "users"
-    
+
     id = Column(Integer,primary_key= True,autoincrement=True)
     username = Column(String)
     email = Column(String)
@@ -24,6 +31,5 @@ class UserDB(Base):
     class Config:
         orm_mode = True
 
-Base.metadata.create_all()
 
 
