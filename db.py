@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session,sessionmaker,declarative_base
 from sqlalchemy import Column,Integer,String,Date,Boolean,create_engine
-from datetime import datetime
+from datetime import datetime,timezone
+from passlib.context import CryptContext
+
+
 
 engine = create_engine(
     url="sqlite:///./users.db"
@@ -25,7 +28,7 @@ class UserDB(Base):
     username = Column(String)
     email = Column(String)
     password = Column(String)
-    created_at = Column(Date,default=datetime.now())
+    created_at = Column(Date,default=datetime.now(timezone.utc))
     fl_active = Column(Boolean,default=True)
 
     class Config:
