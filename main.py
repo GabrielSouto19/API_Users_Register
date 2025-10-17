@@ -1,7 +1,7 @@
 from fastapi import FastAPI,Response,HTTPException,Depends
 from schemas import UserIn,UserOut
 from db import Base,Session,UserDB,get_session,engine
-from security import hash_password,verifify_password,create_acess_token
+from security import hash_password,verifify_password,create_acess_token,verify_token
 
 app = FastAPI()
 
@@ -46,7 +46,12 @@ async def authenticate(user:UserIn,db:Session=Depends(get_session)):
     
     raise HTTPException(status_code=404,detail="Not Found!")
 
+
+@app.get("/rotaprotegida")
+async def acessar_rota_protegida(current_user = Depends(verify_token)):
+    return {"message":f"Hello, {current_user.username}! You have accessed a protected route."}
     
+
 @app.on_event("startup")
 def start_application():
     Base.metadata.create_all(bind=engine)
