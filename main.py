@@ -1,7 +1,7 @@
 from fastapi import FastAPI,Response,HTTPException,Depends
 from schemas import UserIn,UserOut
 from db import Base,Session,UserDB,get_session,engine
-from security import hash_password,verifify_password
+from security import hash_password,verifify_password,create_acess_token
 
 app = FastAPI()
 
@@ -39,7 +39,10 @@ async def authenticate(user:UserIn,db:Session=Depends(get_session)):
     user_db = db.query(UserDB).filter(UserDB.username==user.username).first()
     if user_db:
         authenticated = verifify_password(user.password,user_db.password)
-        return authenticated
+        if authenticated:
+            access_token = create_acess_token(user_db.id)
+            return {"access_token":access_token,"token_type":"bearer"}
+        raise HTTPException(status_code=401,detail="Invalid credentials!")
     
     raise HTTPException(status_code=404,detail="Not Found!")
 

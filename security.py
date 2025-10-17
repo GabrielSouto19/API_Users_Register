@@ -28,5 +28,10 @@ def create_acess_token(user_id:int,expire_minutes:int=ACCESS_TOKEN_EXPIRE_MINUTE
     token = jwt.encode(payload,SECRET_KEY,ALGORITHM)
     return token 
 
+# def verify_token(token:str):
+#     try:
+#         payload = jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
+    
+
 if __name__ == "__main__":
     print(create_acess_token(1))
